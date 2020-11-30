@@ -1,0 +1,60 @@
+timezone: Asia/Tokyo
+
+schedule:
+  daily>: 22:00:00
+
+_export:
+  td:
+    database: data_backup
+  date_5_days_ago: ${moment(session_date).subtract(5, 'days').format("YYYYMMDD")}
+  date_1_days_ago: ${moment(session_date).subtract(1, 'days').format("YYYYMMDD")}
+
+# answers_report のバックアップを取得する
++task1:
+  _export:
+    backup_table_name: 'answers_report.summary_real'
+  +subtask1:
+    td>: queries/backup.sql
+    create_table: answers_report_summary_real
+
+# okbizcs_report のバックアップを取得する
++task2:
+  _export:
+    backup_table_name: 'okbizcs_report.summary_by_all_real'
+  +subtask1:
+    td>: queries/backup.sql
+    create_table: okbizcs_report_summary_by_all_real
+
+# okbizcs_report のバックアップを取得する
++task3:
+  _export:
+    backup_table_name: 'okbizcs_report.summary_by_company_real'
+  +subtask1:
+    td>: queries/backup.sql
+    create_table: okbizcs_report_summary_by_company_real
+
+# okbizcs_migration のバックアップを取得する
+# 4日分を残す
+# 過去分が消去される仕様になるため
++task4:
+  _export:
+    backup_table_name: 'okbizcs_migration.sendmail_buffer'
+  +subtask1:
+    td_ddl>:
+    drop_tables: ['okbizcs_migration_sendmail_buffer_${date_5_days_ago}']
+  +subtask2:
+    td>: queries/backup.sql
+    create_table: okbizcs_migration_sendmail_buffer_${date_1_days_ago}
+
+# answers_migration のバックアップを取得する
+# 4日分を残す
+# マスターデータがTDにしかないため
++task5:
+  _export:
+    backup_table_name: 'answers_migration.pv_qa_total_summary'
+  +subtask1:
+    td_ddl>:
+    drop_tables: ['answers_migration_pv_qa_total_summary_${date_5_days_ago}']
+  +subtask2:
+    td>: queries/backup.sql
+    create_table: answers_migration_pv_qa_total_summary_${date_1_days_ago}

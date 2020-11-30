@@ -1,0 +1,32 @@
+timezone: Asia/Tokyo
+
+schedule:
+  hourly>: 00:00
+
+_export:
+  td:
+    database: data_backup
+
+# answers_tracking_prod のバックアップを取得する
++task1:
+  _export:
+    backup_table_name: 'answers_tracking_prod.pageviews'
+  +subtask1:
+    td>: queries/backup.sql
+    create_table: answers_tracking_prod_pageviews
+
+# okbizcs_tracking_prod のバックアップを取得する
++task2:
+  _export:
+    backup_table_name: 'okbizcs_tracking_prod.pageviews'
+  +subtask1:
+    td>: queries/backup.sql
+    create_table: okbizcs_tracking_prod_pageviews
+
+# gratica_tracking_prod のバックアップを取得する
++task3:
+  _export:
+    backup_table_name: 'gratica_tracking_prod.pageviews'
+  +subtask1:
+    td>: queries/backup.sql
+    create_table: gratica_tracking_prod_pageviews
